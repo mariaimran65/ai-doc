@@ -116,7 +116,7 @@ async def callback(code: str, state: str, db: AsyncSession = Depends(get_db)):
         exp=expires_at,
     )
 
-    response = RedirectResponse(url=settings.frontend_url)
+    response = RedirectResponse(url=settings.frontend_url, status_code=302)
     response.set_cookie(
         key="access_token",
         value=jwt_token,
