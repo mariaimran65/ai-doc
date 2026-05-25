@@ -1,35 +1,45 @@
-# DevAI-Doc — Production Stack
+# AI-Doc — Production Stack
 #
 # Used by Dokploy to run the application in production.
-# This file is deliberately different from docker-compose.yml.
-# Read the differences and understand each one before deploying.
-#
-# Key differences from the development compose file:
-#   - Database port is NOT exposed to the internet
-#   - Source code is NOT mounted as a volume — the image is the artefact
-#   - No debug flags or hot-reload commands
-#   - Redis port is NOT exposed — only accessible within the Docker network
-#   - Restart policies are set so services recover from crashes automatically
+# Key differences from docker-compose.yml:
+#   - Database and Redis ports are NOT exposed
+#   - Source code is NOT mounted — the built image is the artefact
+#   - Restart policies ensure services recover automatically
+#   - Health checks on all services
 #
 # Environment variables are set in the Dokploy secrets panel.
-# Never put real values in this file. Never commit secrets to the repository.
+# Never put real values in this file. Never commit secrets.
 
 services:
 
-  app:
-    image: ${REGISTRY_IMAGE}:${IMAGE_TAG:-latest}   # built image, not source mount
+  api:
+    image: ${REGISTRY_IMAGE}:${IMAGE_TAG:-latest}
     restart: unless-stopped
     ports:
-      - "3000:3000"                                 # only the app port is exposed; adjust as needed
+      - "8000:8000"
     env_file:
-      - .env                                        # Dokploy injects this from the secrets panel
+      - .env
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  frontend:
+    image: ${REGISTRY_IMAGE_FRONTEND}:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -38,9 +48,7 @@ services:
   db:
     image: pgvector/pgvector:pg16
     restart: unless-stopped
-    # No ports section here — the database is NOT exposed to the internet.
-    # The app container reaches it via the service name "db" on the internal network.
-    # Exposing the database port in production is a critical security mistake.
+    # No ports — database is never exposed to the internet in production.
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -56,7 +64,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    # No ports section — Redis is not exposed to the internet in production.
+    # No ports — Redis is never exposed to the internet in production.
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s

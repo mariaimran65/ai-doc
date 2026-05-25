@@ -1,4 +1,4 @@
-# DevAI-Doc — Local Development Stack
+# AI-Doc — Local Development Stack
 #
 # Runs the full stack locally with hot-reload and direct database access.
 # Start with: docker compose up --build
@@ -12,56 +12,52 @@
 services:
 
   # ---------------------------------------------------------------------------
-  # Application service
+  # FastAPI backend
   # ---------------------------------------------------------------------------
-  # The app service runs your application code. The source directory is mounted
-  # as a volume so that code changes are reflected immediately without rebuilding
-  # the image. This is the developer experience affordance — convenient locally,
-  # inappropriate in production where immutability is the goal.
-  #
-  # Update the image, build context, and command to match your chosen stack.
-  # Examples are provided for FastAPI and Next.js — uncomment the one you use
-  # and delete the other.
-  app:
+  api:
     build:
-      context: .
-      dockerfile: Dockerfile.dev           # development Dockerfile — install dev deps, hot reload
+      context: ../backend
+      dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"                        # change to match your application port
+      - "8000:8000"
     volumes:
-      - .:/app                             # mount source for hot-reload
-      - /app/node_modules                  # exclude node_modules from the mount (Next.js)
-    environment:
-      - NODE_ENV=development               # or ENVIRONMENT=development for Python
+      - ../backend:/app
     env_file:
-      - .env                               # all secrets and config from .env
+      - .env
     depends_on:
       db:
-        condition: service_healthy         # wait for postgres to be ready before starting
+        condition: service_healthy
       redis:
         condition: service_healthy
-    # FastAPI example command:
-    # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    # Next.js example command:
-    # command: npm run dev
+    # command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   # ---------------------------------------------------------------------------
-  # PostgreSQL service
+  # React + Vite frontend
   # ---------------------------------------------------------------------------
-  # Using the pgvector image so the vector extension is available from Phase 1
-  # onward. If you are on a different Postgres version, adjust the tag:
-  # pgvector/pgvector:pg15, pgvector/pgvector:pg17, etc.
-  #
-  # The database port is exposed to localhost so pgAdmin can connect directly.
-  # This exposure is local-only — Docker does not publish this to the internet
-  # unless you explicitly do so in a production config.
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - api
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL with pgvector
+  # ---------------------------------------------------------------------------
   db:
     image: pgvector/pgvector:pg16
     ports:
-      - "5432:5432"                        # accessible at localhost:5432 for pgAdmin
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data   # named volume persists data between runs
-      - ./schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql   # apply schema on first run
+      - postgres_data:/var/lib/postgresql/data
+      - ../schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -73,15 +69,12 @@ services:
       retries: 5
 
   # ---------------------------------------------------------------------------
-  # Redis service
+  # Redis
   # ---------------------------------------------------------------------------
-  # Used for agent conversational memory from Phase 4 onward.
-  # Included here from Phase 1 so the infrastructure is in place and the
-  # compose file does not need to change later.
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"                        # accessible at localhost:6379 for local debugging
+      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -91,7 +84,5 @@ services:
 # ---------------------------------------------------------------------------
 # Named volumes
 # ---------------------------------------------------------------------------
-# Named volumes persist data between docker compose down and docker compose up.
-# docker compose down -v removes them — use this to reset to a clean state.
 volumes:
   postgres_data:
