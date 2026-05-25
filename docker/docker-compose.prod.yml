@@ -3,7 +3,7 @@
 # Used by Dokploy to run the application in production.
 # Key differences from docker-compose.yml:
 #   - Database and Redis ports are NOT exposed
-#   - Source code is NOT mounted — the built image is the artefact
+#   - Source code is NOT mounted — built at deploy time, not hot-reloaded
 #   - Restart policies ensure services recover automatically
 #   - Health checks on all services
 #
@@ -13,12 +13,27 @@
 services:
 
   api:
-    image: ${REGISTRY_IMAGE}:${IMAGE_TAG:-latest}
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
+      GOOGLE_OAUTH_REDIRECT_URI: ${GOOGLE_OAUTH_REDIRECT_URI}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -29,21 +44,23 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 20s
+      start_period: 30s
 
   frontend:
-    image: ${REGISTRY_IMAGE_FRONTEND}:${IMAGE_TAG:-latest}
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "5173:5173"
     depends_on:
       - api
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5173 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 20s
+      start_period: 30s
 
   db:
     image: pgvector/pgvector:pg16
@@ -51,6 +68,7 @@ services:
     # No ports — database is never exposed to the internet in production.
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ../schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
