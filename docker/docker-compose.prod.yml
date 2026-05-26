@@ -6,10 +6,10 @@
 #   - Source code is NOT mounted — built at deploy time
 #   - Restart policies ensure services recover automatically
 #   - Health checks on all services
-#   - Both app services join dokploy-network so Traefik can route to them
+#   - Traefik labels are defined here as the single source of routing config
 #
-# Domain routing is configured through Dokploy's Domains UI — do not add
-# Traefik labels here as they conflict with what Dokploy injects.
+# IMPORTANT: Do NOT configure domains for api/frontend in Dokploy's Domains UI.
+# That causes duplicate/conflicting labels. This file owns all routing config.
 #
 # Environment variables are set in the Dokploy secrets panel.
 # Never put real values in this file. Never commit secrets.
@@ -24,6 +24,13 @@ services:
     networks:
       - default
       - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-doc-api.rule=Host(`api-aidoc.talent.techsupersonic.com`)"
+      - "traefik.http.routers.ai-doc-api.entrypoints=websecure"
+      - "traefik.http.routers.ai-doc-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ai-doc-api.loadbalancer.server.port=8000"
+      - "traefik.docker.network=dokploy-network"
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -59,6 +66,13 @@ services:
     networks:
       - default
       - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-doc-frontend.rule=Host(`aidoc.talent.techsupersonic.com`)"
+      - "traefik.http.routers.ai-doc-frontend.entrypoints=websecure"
+      - "traefik.http.routers.ai-doc-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ai-doc-frontend.loadbalancer.server.port=5173"
+      - "traefik.docker.network=dokploy-network"
     depends_on:
       - api
     healthcheck:
