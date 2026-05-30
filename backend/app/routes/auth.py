@@ -86,7 +86,9 @@ async def callback(code: str, state: str, db: AsyncSession = Depends(get_db)):
         profile = profile_resp.json()
 
     result = await db.execute(
-        select(User).where(User.provider == "google", User.provider_user_id == profile["id"])
+        select(User).where(
+            User.provider == "google", User.provider_user_id == profile["id"]
+        )
     )
     user = result.scalar_one_or_none()
 
@@ -104,7 +106,9 @@ async def callback(code: str, state: str, db: AsyncSession = Depends(get_db)):
 
     await db.flush()
 
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)
+    expires_at = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.jwt_expire_minutes
+    )
     session_token = secrets.token_urlsafe(32)
     db.add(Session(user_id=user.id, token=session_token, expires_at=expires_at))
     await db.commit()

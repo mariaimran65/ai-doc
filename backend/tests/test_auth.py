@@ -1,4 +1,5 @@
 """Tests for OAuth callback behaviour and database constraints."""
+
 import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -8,6 +9,7 @@ from app.models.user import User
 # ---------------------------------------------------------------------------
 # OAuth callback — creates user
 # ---------------------------------------------------------------------------
+
 
 async def test_oauth_callback_creates_user(client, mock_db):
     """Callback with an unknown Google user must insert a new User row."""
@@ -46,6 +48,7 @@ async def test_oauth_callback_creates_user(client, mock_db):
 # ---------------------------------------------------------------------------
 # OAuth callback — duplicate login updates existing record
 # ---------------------------------------------------------------------------
+
 
 async def test_duplicate_oauth_login_updates_existing_record(client, mock_db):
     """Callback for a returning user must update the existing row, not insert a new one."""
@@ -93,6 +96,7 @@ async def test_duplicate_oauth_login_updates_existing_record(client, mock_db):
 # Unique constraint declared on the model
 # ---------------------------------------------------------------------------
 
+
 def test_unique_constraint_on_provider_and_provider_user_id():
     """User model must declare a UniqueConstraint on (provider, provider_user_id).
 
@@ -111,6 +115,7 @@ def test_unique_constraint_on_provider_and_provider_user_id():
 # ---------------------------------------------------------------------------
 # /auth/me — unauthenticated request is rejected
 # ---------------------------------------------------------------------------
+
 
 async def test_me_returns_401_without_cookie(client):
     """GET /auth/me must return 401 when no JWT cookie is present."""

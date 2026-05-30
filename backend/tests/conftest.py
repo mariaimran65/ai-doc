@@ -20,6 +20,7 @@ def mock_db():
 @pytest.fixture
 def app_with_mock_db(mock_db):
     """FastAPI app with get_db overridden to yield the mock session."""
+
     async def override():
         yield mock_db
 
