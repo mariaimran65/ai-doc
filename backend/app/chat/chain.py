@@ -1,4 +1,4 @@
-from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain.agents import create_tool_calling_agent, AgentExecutor
@@ -18,11 +18,11 @@ Always be concise and technical. When showing code, use markdown code blocks."""
 
 
 def build_executor(user_id: str, email: str) -> AgentExecutor:
-    llm = ChatOpenAI(
-        model="gpt-4o-mini",
+    llm = ChatAnthropic(
+        model="claude-haiku-4-5-20251001",
         temperature=0.3,
         streaming=True,
-        api_key=settings.openai_api_key,
+        api_key=settings.anthropic_api_key,
     )
     tools = make_user_tools(user_id, email)
 
