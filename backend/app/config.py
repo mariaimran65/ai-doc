@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     allowed_origins: str = "http://localhost:5173"
     frontend_url: str = "http://localhost:5173"
 
+    openai_api_key: str = ""
+
     class Config:
         env_file = ".env"
 

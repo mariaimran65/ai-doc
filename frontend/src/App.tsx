@@ -8,6 +8,7 @@ import { APP_REGISTRY } from './registry'
 
 const Home = lazy(() => import('./pages/Home'))
 const Docs = lazy(() => import('./pages/Docs'))
+const Chat = lazy(() => import('./pages/Chat'))
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -25,6 +26,7 @@ function Shell() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/docs/*" element={<Docs />} />
+            <Route path="/chat/*" element={<Chat />} />
             {APP_REGISTRY.filter(a => !a.live && a.path !== '/').map(app => (
               <Route
                 key={app.path}
