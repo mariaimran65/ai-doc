@@ -1,0 +1,105 @@
+.page {
+  padding: 32px 28px;
+  max-width: 1100px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  color: var(--text-6);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--text-5);
+  margin-bottom: 28px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--blue-border);
+  background: #0d1520;
+}
+
+.cardLocked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.icon {
+  color: var(--blue-text);
+  margin-bottom: 10px;
+}
+
+.iconLocked {
+  color: var(--text-7);
+}
+
+.cardName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+
+.cardDesc {
+  font-size: 12px;
+  color: var(--text-5);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badgeLive {
+  background: var(--green-bg);
+  color: var(--green-text);
+  border: 0.5px solid var(--green-border);
+}
+
+.badgeLocked {
+  background: #1a1a1a;
+  color: var(--text-6);
+  border: 0.5px solid var(--border-sub);
+}
+
+.lockIcon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #2a2a2a;
+}

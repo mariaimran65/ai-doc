@@ -1,14 +1,21 @@
-import styles from './Page.module.css'
+import { IconLock } from '@tabler/icons-react'
+import styles from './ComingSoon.module.css'
 
-/** Placeholder rendered for applications not yet built.
- *
- * @param phase - The phase number in which this application is introduced.
- */
-export default function ComingSoon({ phase }: { phase: number }) {
+interface Props {
+  phase: number
+  name: string
+  description: string
+}
+
+export default function ComingSoon({ phase, name, description }: Props) {
   return (
     <div className={styles.page}>
-      <h1>Coming in Phase {phase}</h1>
-      <p className={styles.sub}>This application is built in Phase {phase} of the programme.</p>
+      <div className={styles.lockWrap}>
+        <IconLock size={28} />
+      </div>
+      <p className={styles.title}>{name}</p>
+      <p className={styles.desc}>{description}</p>
+      <span className={styles.badge}>Phase {phase} · Upcoming</span>
     </div>
   )
 }
