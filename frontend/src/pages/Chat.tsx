@@ -82,7 +82,17 @@ export default function Chat() {
 
           try {
             const parsed = JSON.parse(data)
-            if (parsed.error) throw new Error(parsed.error)
+            if (parsed.error) {
+              setMessages(prev => {
+                const copy = [...prev]
+                copy[copy.length - 1] = {
+                  role: 'assistant',
+                  content: `Error: ${parsed.error}`,
+                }
+                return copy
+              })
+              return
+            }
             if (parsed.token) {
               setMessages(prev => {
                 const copy = [...prev]
@@ -94,7 +104,7 @@ export default function Chat() {
               })
             }
           } catch {
-            // ignore parse errors for partial chunks
+            // ignore JSON parse errors for partial SSE chunks
           }
         }
       }
