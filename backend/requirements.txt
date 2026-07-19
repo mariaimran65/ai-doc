@@ -17,3 +17,6 @@ langchain-community==0.3.24
 duckduckgo-search==8.0.1
 sse-starlette==1.6.5
 langgraph==0.2.73
+pypdf==5.1.0
+pgvector==0.3.5
+fastembed==0.4.2
