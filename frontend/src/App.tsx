@@ -11,6 +11,7 @@ const Docs = lazy(() => import('./pages/Docs'))
 const Chat = lazy(() => import('./pages/Chat'))
 const Agents = lazy(() => import('./pages/Agents'))
 const Knowledge = lazy(() => import('./pages/Knowledge'))
+const Metrics = lazy(() => import('./pages/Metrics'))
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -31,6 +32,7 @@ function Shell() {
             <Route path="/chat/*" element={<Chat />} />
             <Route path="/agents/*" element={<Agents />} />
             <Route path="/knowledge/*" element={<Knowledge />} />
+            <Route path="/metrics/*" element={<Metrics />} />
             {APP_REGISTRY.filter(a => !a.live && a.path !== '/').map(app => (
               <Route
                 key={app.path}

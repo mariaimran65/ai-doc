@@ -5,6 +5,7 @@ import {
   IconMessageChatbot,
   IconRobot,
   IconDatabase,
+  IconChartBar,
   IconLock,
 } from '@tabler/icons-react'
 import { useAuth } from '../context/AuthContext'
@@ -17,6 +18,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; className?: str
   Chat: IconMessageChatbot,
   Agents: IconRobot,
   Knowledge: IconDatabase,
+  Metrics: IconChartBar,
 }
 
 function AppCard({ app }: { app: AppEntry }) {

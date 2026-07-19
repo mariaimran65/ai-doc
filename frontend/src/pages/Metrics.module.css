@@ -1,0 +1,149 @@
+.shell {
+  padding: 28px;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+/* Stat cards */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.statCard {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--text-5);
+}
+
+/* Tables */
+.tableWrap {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.table th {
+  text-align: left;
+  padding: 9px 14px;
+  color: var(--text-5);
+  font-weight: 500;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--surface-3);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table td {
+  padding: 9px 14px;
+  color: var(--text-3);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: var(--surface-2);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.badgeGoogle {
+  background: var(--blue-bg);
+  color: var(--blue-text);
+  border: 0.5px solid var(--blue-border);
+}
+
+.empty {
+  padding: 20px 14px;
+  font-size: 12px;
+  color: var(--text-6);
+  text-align: center;
+}
+
+/* LangSmith banner */
+.banner {
+  background: var(--blue-bg);
+  border: 0.5px solid var(--blue-border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bannerIcon {
+  color: var(--blue-text);
+  flex-shrink: 0;
+}
+
+.bannerText {
+  flex: 1;
+}
+
+.bannerTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--blue-text);
+  margin-bottom: 3px;
+}
+
+.bannerDesc {
+  font-size: 12px;
+  color: var(--text-4);
+  line-height: 1.5;
+}
+
+.bannerDesc code {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--blue-text);
+}
+
+.loading {
+  font-size: 13px;
+  color: var(--text-6);
+  padding: 40px 0;
+  text-align: center;
+}
