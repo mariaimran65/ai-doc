@@ -29,7 +29,7 @@ async def retrieve_chunks(db: AsyncSession, query: str, document_id: str | None 
             text(
                 "SELECT chunk_text FROM document_chunks "
                 "WHERE document_id = :doc_id "
-                "ORDER BY embedding <=> :vec::vector "
+                "ORDER BY embedding <=> CAST(:vec AS vector) "
                 "LIMIT :k"
             ),
             {"doc_id": document_id, "vec": vector_str, "k": TOP_K},
@@ -38,7 +38,7 @@ async def retrieve_chunks(db: AsyncSession, query: str, document_id: str | None 
         rows = await db.execute(
             text(
                 "SELECT chunk_text FROM document_chunks "
-                "ORDER BY embedding <=> :vec::vector "
+                "ORDER BY embedding <=> CAST(:vec AS vector) "
                 "LIMIT :k"
             ),
             {"vec": vector_str, "k": TOP_K},
