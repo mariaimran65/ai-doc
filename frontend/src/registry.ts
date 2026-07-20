@@ -26,7 +26,7 @@ export const APP_REGISTRY: AppEntry[] = [
     path: '/chat',
     phase: 2,
     description: 'LangChain-powered chatbot with tool use and memory.',
-    live: false,
+    live: true,
   },
   {
     name: 'Agents',
