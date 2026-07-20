@@ -1,6 +1,6 @@
 .sidebar {
-  width: 220px;
-  min-width: 220px;
+  width: 240px;
+  min-width: 240px;
   background: var(--surface-3);
   border-right: 1px solid var(--border);
   display: flex;
@@ -15,15 +15,15 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 20px 16px 16px;
+  gap: 11px;
+  padding: 22px 18px 18px;
   border-bottom: 1px solid var(--border);
 }
 
 .brandIcon {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   background: var(--accent-dim);
   border: 1px solid var(--accent-border);
   display: flex;
@@ -34,7 +34,7 @@
 }
 
 .brandName {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-1);
   letter-spacing: -0.01em;
@@ -43,7 +43,7 @@
 /* Nav */
 .nav {
   flex: 1;
-  padding: 12px 10px;
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -51,24 +51,24 @@
 }
 
 .navLabel {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-5);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0 8px;
-  margin-bottom: 4px;
+  padding: 0 10px;
+  margin-bottom: 6px;
   margin-top: 2px;
 }
 
 .link {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 7px 10px;
+  gap: 10px;
+  padding: 9px 12px;
   border-radius: var(--radius-sm);
   color: var(--text-4);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   transition: color 0.1s, background 0.1s;
@@ -92,7 +92,7 @@
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 16px;
+  height: 18px;
   background: var(--accent);
   border-radius: 0 3px 3px 0;
 }
@@ -102,7 +102,7 @@
 }
 
 .phaseBadge {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-6);
   letter-spacing: 0.04em;
@@ -116,7 +116,7 @@
 /* Bottom user section */
 .bottom {
   border-top: 1px solid var(--border);
-  padding: 10px;
+  padding: 12px;
   position: relative;
 }
 
@@ -124,8 +124,8 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px;
+  gap: 10px;
+  padding: 9px 10px;
   border-radius: var(--radius-sm);
   background: none;
   border: none;
@@ -139,15 +139,15 @@
 }
 
 .avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   background: var(--accent-btn);
   border: 1px solid var(--accent-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--accent-text);
   flex-shrink: 0;
@@ -159,7 +159,7 @@
 }
 
 .userName {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-2);
   white-space: nowrap;
@@ -168,7 +168,7 @@
 }
 
 .userEmail {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-5);
   white-space: nowrap;
   overflow: hidden;
@@ -188,8 +188,8 @@
 .userMenu {
   position: absolute;
   bottom: calc(100% + 4px);
-  left: 10px;
-  right: 10px;
+  left: 12px;
+  right: 12px;
   background: var(--surface-2);
   border: 1px solid var(--border-sub);
   border-radius: var(--radius-md);
@@ -201,12 +201,12 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
+  gap: 9px;
+  padding: 9px 12px;
   border-radius: 6px;
   background: none;
   border: none;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-3);
   cursor: pointer;
   transition: background 0.1s, color 0.1s;
