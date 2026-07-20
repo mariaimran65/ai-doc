@@ -2,29 +2,29 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 28px;
+  padding: 28px 32px;
   gap: 20px;
-  max-width: 1100px;
+  max-width: 1200px;
 }
 
 .cols {
   display: grid;
   grid-template-columns: 300px 1fr;
-  gap: 16px;
+  gap: 14px;
   flex: 1;
   min-height: 0;
 }
 
-/* Left — upload + document list */
+/* Left — upload + doc list */
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .uploadBox {
   background: var(--surface);
-  border: 0.5px dashed var(--border-sub);
+  border: 1px dashed var(--border-sub);
   border-radius: var(--radius-md);
   padding: 20px 16px;
   text-align: center;
@@ -32,8 +32,9 @@
   transition: border-color 0.15s;
 }
 
-.uploadBox:hover, .uploadBoxActive {
-  border-color: var(--blue-border);
+.uploadBox:hover,
+.uploadBoxActive {
+  border-color: var(--accent-border);
 }
 
 .uploadIcon {
@@ -48,24 +49,23 @@
 }
 
 .uploadLabel strong {
-  color: var(--blue-text);
+  color: var(--accent-text);
   display: block;
   margin-bottom: 2px;
 }
 
-.uploadInput {
-  display: none;
-}
+.uploadInput { display: none; }
 
 .uploadBtn {
   margin-top: 10px;
   width: 100%;
-  padding: 7px 0;
-  background: var(--blue-btn);
-  border: 0.5px solid var(--blue-border);
+  padding: 8px 0;
+  background: var(--accent-btn);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
-  color: var(--blue-text);
+  color: var(--accent-text);
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -74,35 +74,25 @@
   transition: background 0.12s;
 }
 
-.uploadBtn:hover:not(:disabled) { background: #2a4a7f; }
-.uploadBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.uploadBtn:hover:not(:disabled) { background: rgba(99, 102, 241, 0.22); }
+.uploadBtn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.uploadStatus {
-  font-size: 12px;
-  color: var(--text-5);
-  text-align: center;
-}
-
-.uploadError {
-  color: #e05a5a;
-}
-
-.uploadSuccess {
-  color: var(--green-text);
-}
+.uploadStatus { font-size: 12px; color: var(--text-5); text-align: center; }
+.uploadError { color: #f87171; }
+.uploadSuccess { color: var(--green-text); }
 
 .docList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   flex: 1;
   overflow-y: auto;
 }
 
 .docCard {
   background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   padding: 10px 12px;
   cursor: pointer;
   transition: border-color 0.12s;
@@ -111,12 +101,15 @@
   color: inherit;
 }
 
-.docCard:hover, .docCardActive {
-  border-color: var(--blue-border);
+.docCard:hover,
+.docCardActive {
+  border-color: var(--accent-border);
+  background: var(--accent-dim);
 }
 
 .docName {
   font-size: 12px;
+  font-weight: 500;
   color: var(--text-2);
   margin-bottom: 3px;
   word-break: break-all;
@@ -124,7 +117,7 @@
 
 .docMeta {
   font-size: 11px;
-  color: var(--text-6);
+  color: var(--text-5);
 }
 
 .noDocMsg {
@@ -137,7 +130,7 @@
 /* Right — Q&A */
 .qaPanel {
   background: var(--surface);
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
@@ -177,21 +170,21 @@
 }
 
 .qaBubbleUser {
-  background: var(--blue-btn);
-  border: 0.5px solid var(--blue-border);
+  background: var(--accent-btn);
+  border: 1px solid var(--accent-border);
   color: var(--text-1);
   align-self: flex-end;
 }
 
 .qaBubbleAssistant {
   background: var(--surface-2);
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
   color: var(--text-2);
   align-self: flex-start;
 }
 
 .qaInputBar {
-  border-top: 0.5px solid #1a1a1a;
+  border-top: 1px solid var(--border);
   padding: 12px 16px;
   display: flex;
   gap: 10px;
@@ -202,7 +195,7 @@
 .qaInput {
   flex: 1;
   background: var(--surface);
-  border: 0.5px solid var(--border-sub);
+  border: 1px solid var(--border-sub);
   border-radius: var(--radius-md);
   padding: 9px 14px;
   font-size: 13px;
@@ -213,7 +206,7 @@
 
 .qaInput:focus {
   outline: none;
-  border-color: var(--blue-border);
+  border-color: var(--accent-border);
 }
 
 .qaInput::placeholder { color: var(--text-6); }
@@ -222,15 +215,16 @@
 .askBtn {
   height: 36px;
   padding: 0 16px;
-  background: var(--blue-btn);
-  border: 0.5px solid var(--blue-border);
+  background: var(--accent-btn);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
-  color: var(--blue-text);
+  color: var(--accent-text);
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.12s;
 }
 
-.askBtn:hover:not(:disabled) { background: #2a4a7f; }
-.askBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.askBtn:hover:not(:disabled) { background: rgba(99, 102, 241, 0.22); }
+.askBtn:disabled { opacity: 0.35; cursor: not-allowed; }
