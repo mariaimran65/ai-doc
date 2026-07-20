@@ -24,7 +24,7 @@ def chunk_text(text: str) -> list[str]:
     chunks = []
     i = 0
     while i < len(words):
-        chunk = " ".join(words[i: i + CHUNK_SIZE])
+        chunk = " ".join(words[i : i + CHUNK_SIZE])
         if chunk.strip():
             chunks.append(chunk)
         i += CHUNK_SIZE - CHUNK_OVERLAP
@@ -53,7 +53,13 @@ async def ingest_document(
             "INSERT INTO documents (id, user_id, title, source_name, raw_text) "
             "VALUES (:id, :user_id, :title, :source_name, :raw_text)"
         ),
-        {"id": doc_id, "user_id": user_id, "title": filename, "source_name": filename, "raw_text": raw_text},
+        {
+            "id": doc_id,
+            "user_id": user_id,
+            "title": filename,
+            "source_name": filename,
+            "raw_text": raw_text,
+        },
     )
 
     # Embed all chunks in one batch
