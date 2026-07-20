@@ -26,12 +26,14 @@ def build_executor(user_id: str, email: str) -> AgentExecutor:
     )
     tools = make_user_tools(user_id, email)
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT),
-        MessagesPlaceholder("chat_history"),
-        ("human", "{input}"),
-        MessagesPlaceholder("agent_scratchpad"),
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", SYSTEM_PROMPT),
+            MessagesPlaceholder("chat_history"),
+            ("human", "{input}"),
+            MessagesPlaceholder("agent_scratchpad"),
+        ]
+    )
 
     agent = create_tool_calling_agent(llm, tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=False)
