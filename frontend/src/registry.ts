@@ -42,4 +42,11 @@ export const APP_REGISTRY: AppEntry[] = [
     description: 'RAG pipeline with pgvector embeddings and retrieval.',
     live: true,
   },
+  {
+    name: 'Metrics',
+    path: '/metrics',
+    phase: 5,
+    description: 'Platform observability — usage stats, active sessions, agent run history.',
+    live: true,
+  },
 ]

@@ -1,7 +1,7 @@
 import asyncio
 import json
 
-from fastapi import APIRouter, Depends, File, Form, UploadFile, HTTPException
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +23,9 @@ async def upload(
 ):
     """Upload and ingest a PDF or text file."""
     if file.content_type not in ("application/pdf", "text/plain"):
-        raise HTTPException(status_code=400, detail="Only PDF and .txt files are supported.")
+        raise HTTPException(
+            status_code=400, detail="Only PDF and .txt files are supported."
+        )
 
     content = await file.read()
     if len(content) > 10 * 1024 * 1024:
@@ -57,7 +59,13 @@ async def list_documents(
         {"uid": current_user["sub"]},
     )
     return [
-        {"id": str(r[0]), "title": r[1], "source_name": r[2], "created_at": str(r[3]), "chunks": r[4]}
+        {
+            "id": str(r[0]),
+            "title": r[1],
+            "source_name": r[2],
+            "created_at": str(r[3]),
+            "chunks": r[4],
+        }
         for r in rows.fetchall()
     ]
 
@@ -74,6 +82,7 @@ async def ask(
     current_user: dict = Depends(get_current_user),
 ):
     """Answer a question using RAG — retrieves relevant chunks then generates with Claude."""
+
     async def event_generator():
         try:
             answer = await answer_question(
@@ -83,7 +92,7 @@ async def ask(
             )
             chunk_size = 4
             for i in range(0, len(answer), chunk_size):
-                yield {"data": json.dumps({"token": answer[i: i + chunk_size]})}
+                yield {"data": json.dumps({"token": answer[i : i + chunk_size]})}
                 await asyncio.sleep(0.01)
         except Exception as e:
             yield {"data": json.dumps({"error": str(e)})}

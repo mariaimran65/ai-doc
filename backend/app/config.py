@@ -25,6 +25,10 @@ class Settings(BaseSettings):
 
     anthropic_api_key: str = ""
 
+    langchain_tracing_v2: str = "false"
+    langchain_api_key: str = ""
+    langchain_project: str = "ai-doc"
+
     class Config:
         env_file = ".env"
 

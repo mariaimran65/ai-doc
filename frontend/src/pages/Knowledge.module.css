@@ -2,20 +2,20 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 28px;
-  gap: 20px;
-  max-width: 1100px;
+  padding: 32px 36px;
+  gap: 22px;
+  max-width: 1200px;
 }
 
 .cols {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 16px;
+  grid-template-columns: 320px 1fr;
+  gap: 14px;
   flex: 1;
   min-height: 0;
 }
 
-/* Left — upload + document list */
+/* Left — upload + doc list */
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -24,72 +24,63 @@
 
 .uploadBox {
   background: var(--surface);
-  border: 0.5px dashed var(--border-sub);
+  border: 1px dashed var(--border-sub);
   border-radius: var(--radius-md);
-  padding: 20px 16px;
+  padding: 22px 18px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.15s;
 }
 
-.uploadBox:hover, .uploadBoxActive {
-  border-color: var(--blue-border);
+.uploadBox:hover,
+.uploadBoxActive {
+  border-color: var(--accent-border);
 }
 
 .uploadIcon {
   color: var(--text-6);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .uploadLabel {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-5);
   line-height: 1.6;
 }
 
 .uploadLabel strong {
-  color: var(--blue-text);
+  color: var(--accent-text);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  font-size: 14px;
 }
 
-.uploadInput {
-  display: none;
-}
+.uploadInput { display: none; }
 
 .uploadBtn {
-  margin-top: 10px;
+  margin-top: 12px;
   width: 100%;
-  padding: 7px 0;
-  background: var(--blue-btn);
-  border: 0.5px solid var(--blue-border);
+  padding: 9px 0;
+  background: var(--accent-btn);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
-  color: var(--blue-text);
-  font-size: 12px;
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 7px;
   transition: background 0.12s;
 }
 
-.uploadBtn:hover:not(:disabled) { background: #2a4a7f; }
-.uploadBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.uploadBtn:hover:not(:disabled) { background: rgba(99, 102, 241, 0.22); }
+.uploadBtn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.uploadStatus {
-  font-size: 12px;
-  color: var(--text-5);
-  text-align: center;
-}
-
-.uploadError {
-  color: #e05a5a;
-}
-
-.uploadSuccess {
-  color: var(--green-text);
-}
+.uploadStatus { font-size: 13px; color: var(--text-5); text-align: center; }
+.uploadError { color: #f87171; }
+.uploadSuccess { color: var(--green-text); }
 
 .docList {
   display: flex;
@@ -101,9 +92,9 @@
 
 .docCard {
   background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
   cursor: pointer;
   transition: border-color 0.12s;
   text-align: left;
@@ -111,33 +102,36 @@
   color: inherit;
 }
 
-.docCard:hover, .docCardActive {
-  border-color: var(--blue-border);
+.docCard:hover,
+.docCardActive {
+  border-color: var(--accent-border);
+  background: var(--accent-dim);
 }
 
 .docName {
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-2);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   word-break: break-all;
 }
 
 .docMeta {
-  font-size: 11px;
-  color: var(--text-6);
+  font-size: 12px;
+  color: var(--text-5);
 }
 
 .noDocMsg {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-6);
   text-align: center;
-  padding: 16px 0;
+  padding: 18px 0;
 }
 
 /* Right — Q&A */
 .qaPanel {
   background: var(--surface);
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
@@ -147,10 +141,10 @@
 .qaMessages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .qaEmpty {
@@ -159,42 +153,42 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  gap: 10px;
+  gap: 12px;
   color: var(--text-6);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .qaEmptyIcon { color: var(--text-7); }
 
 .qaBubble {
   max-width: 80%;
-  font-size: 13.5px;
-  line-height: 1.65;
+  font-size: 15px;
+  line-height: 1.7;
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 12px 16px;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
 .qaBubbleUser {
-  background: var(--blue-btn);
-  border: 0.5px solid var(--blue-border);
+  background: var(--accent-btn);
+  border: 1px solid var(--accent-border);
   color: var(--text-1);
   align-self: flex-end;
 }
 
 .qaBubbleAssistant {
   background: var(--surface-2);
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
   color: var(--text-2);
   align-self: flex-start;
 }
 
 .qaInputBar {
-  border-top: 0.5px solid #1a1a1a;
-  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  padding: 14px 18px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: flex-end;
   background: var(--surface-3);
 }
@@ -202,10 +196,10 @@
 .qaInput {
   flex: 1;
   background: var(--surface);
-  border: 0.5px solid var(--border-sub);
+  border: 1px solid var(--border-sub);
   border-radius: var(--radius-md);
-  padding: 9px 14px;
-  font-size: 13px;
+  padding: 11px 16px;
+  font-size: 14px;
   color: var(--text-1);
   font-family: inherit;
   transition: border-color 0.12s;
@@ -213,24 +207,25 @@
 
 .qaInput:focus {
   outline: none;
-  border-color: var(--blue-border);
+  border-color: var(--accent-border);
 }
 
 .qaInput::placeholder { color: var(--text-6); }
 .qaInput:disabled { opacity: 0.5; }
 
 .askBtn {
-  height: 36px;
-  padding: 0 16px;
-  background: var(--blue-btn);
-  border: 0.5px solid var(--blue-border);
+  height: 40px;
+  padding: 0 18px;
+  background: var(--accent-btn);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm);
-  color: var(--blue-text);
-  font-size: 12px;
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.12s;
 }
 
-.askBtn:hover:not(:disabled) { background: #2a4a7f; }
-.askBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.askBtn:hover:not(:disabled) { background: rgba(99, 102, 241, 0.22); }
+.askBtn:disabled { opacity: 0.35; cursor: not-allowed; }

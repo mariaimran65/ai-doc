@@ -34,7 +34,9 @@ def supervisor_node(state: AgentState) -> dict:
 
     # After 3 iterations or when both research and code are done, summarise
     if iteration >= 3 or (research_done and code_done):
-        decision = SupervisorDecision(next="summariser", reasoning="All workers complete.")
+        decision = SupervisorDecision(
+            next="summariser", reasoning="All workers complete."
+        )
     else:
         llm = ChatAnthropic(
             model="claude-haiku-4-5-20251001",
@@ -42,31 +44,42 @@ def supervisor_node(state: AgentState) -> dict:
             api_key=settings.anthropic_api_key,
         ).with_structured_output(SupervisorDecision)
 
-        prompt = ChatPromptTemplate.from_messages([
-            ("system",
-             "You are a supervisor coordinating worker agents. "
-             "Available workers:\n"
-             "- researcher: searches the web and summarises findings\n"
-             "- coder: writes Python code examples\n"
-             "- summariser: synthesises all outputs into a final answer (call last)\n\n"
-             "Workers already done: {done}\n"
-             "Choose the most useful next worker for this task, or FINISH if done."),
-            ("human", "Task: {task}"),
-        ])
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "You are a supervisor coordinating worker agents. "
+                    "Available workers:\n"
+                    "- researcher: searches the web and summarises findings\n"
+                    "- coder: writes Python code examples\n"
+                    "- summariser: synthesises all outputs into a final answer (call last)\n\n"
+                    "Workers already done: {done}\n"
+                    "Choose the most useful next worker for this task, or FINISH if done.",
+                ),
+                ("human", "Task: {task}"),
+            ]
+        )
         done = []
         if research_done:
             done.append("researcher")
         if code_done:
             done.append("coder")
 
-        decision = (prompt | llm).invoke({
-            "task": task,
-            "done": ", ".join(done) if done else "none",
-        })
+        decision = (prompt | llm).invoke(
+            {
+                "task": task,
+                "done": ", ".join(done) if done else "none",
+            }
+        )
 
     return {
         "next": decision.next,
-        "steps": [{"node": "supervisor", "output": f"→ routing to {decision.next}: {decision.reasoning}"}],
+        "steps": [
+            {
+                "node": "supervisor",
+                "output": f"→ routing to {decision.next}: {decision.reasoning}",
+            }
+        ],
         "iteration": iteration + 1,
     }
 
