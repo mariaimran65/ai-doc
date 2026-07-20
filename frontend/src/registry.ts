@@ -40,6 +40,6 @@ export const APP_REGISTRY: AppEntry[] = [
     path: '/knowledge',
     phase: 4,
     description: 'RAG pipeline with pgvector embeddings and retrieval.',
-    live: false,
+    live: true,
   },
 ]

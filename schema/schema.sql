@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS document_chunks (
     document_id UUID NOT NULL REFERENCES documents (id) ON DELETE CASCADE,
     chunk_index INTEGER NOT NULL,                   -- position of this chunk within the document
     chunk_text TEXT NOT NULL,
-    embedding VECTOR(1536),                           -- the semantic representation of chunk_text
+    embedding VECTOR(384),                            -- bge-small-en-v1.5 produces 384-dim vectors
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
