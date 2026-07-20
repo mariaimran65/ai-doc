@@ -8,18 +8,22 @@ from app.knowledge.embeddings import embed_query
 
 TOP_K = 5
 
-ANSWER_PROMPT = ChatPromptTemplate.from_messages([
-    ("system",
-     "You are a helpful assistant that answers questions strictly based on the provided document excerpts. "
-     "If the answer is not in the excerpts, say so. Quote relevant parts when helpful. "
-     "Format your answer clearly using markdown."),
-    ("human",
-     "Question: {question}\n\n"
-     "Document excerpts:\n{context}"),
-])
+ANSWER_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "You are a helpful assistant that answers questions strictly based on the provided document excerpts. "
+            "If the answer is not in the excerpts, say so. Quote relevant parts when helpful. "
+            "Format your answer clearly using markdown.",
+        ),
+        ("human", "Question: {question}\n\n" "Document excerpts:\n{context}"),
+    ]
+)
 
 
-async def retrieve_chunks(db: AsyncSession, query: str, document_id: str | None = None) -> list[str]:
+async def retrieve_chunks(
+    db: AsyncSession, query: str, document_id: str | None = None
+) -> list[str]:
     """Find the top-k most similar chunks to the query using pgvector cosine search."""
     query_vector = embed_query(query)
     vector_str = "[" + ",".join(str(v) for v in query_vector) + "]"
