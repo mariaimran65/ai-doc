@@ -64,14 +64,14 @@ async def ingest_document(
         await db.execute(
             text(
                 "INSERT INTO document_chunks (id, document_id, chunk_index, chunk_text, embedding) "
-                "VALUES (:id, :doc_id, :idx, :chunk_text, :embedding)"
+                "VALUES (:id, :doc_id, :idx, :chunk_text, :embedding::vector)"
             ),
             {
                 "id": str(uuid.uuid4()),
                 "doc_id": doc_id,
                 "idx": idx,
                 "chunk_text": chunk,
-                "embedding": str(vector),
+                "embedding": "[" + ",".join(str(v) for v in vector) + "]",
             },
         )
 
