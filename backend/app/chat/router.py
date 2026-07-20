@@ -52,9 +52,7 @@ async def chat(
         async def run_agent():
             return await loop.run_in_executor(
                 None,
-                lambda: executor.invoke(
-                    {"input": user_input, "chat_history": history}
-                ),
+                lambda: executor.invoke({"input": user_input, "chat_history": history}),
             )
 
         try:
@@ -63,7 +61,7 @@ async def chat(
             # Stream the output in chunks so the UI animates
             chunk_size = 4
             for i in range(0, len(output), chunk_size):
-                chunk = output[i: i + chunk_size]
+                chunk = output[i : i + chunk_size]
                 yield {"data": json.dumps({"token": chunk})}
                 await asyncio.sleep(0.01)
         except Exception as e:
