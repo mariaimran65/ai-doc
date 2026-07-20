@@ -33,7 +33,7 @@ export const APP_REGISTRY: AppEntry[] = [
     path: '/agents',
     phase: 3,
     description: 'LangGraph multi-agent system with supervisor pattern.',
-    live: false,
+    live: true,
   },
   {
     name: 'Knowledge',
