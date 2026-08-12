@@ -1,9 +1,12 @@
 import pytest
+import jwt
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 from httpx import AsyncClient, ASGITransport
 
 from main import app
 from app.database import get_db
+from app.config import settings
 
 
 @pytest.fixture
@@ -36,3 +39,16 @@ async def client(app_with_mock_db):
         transport=ASGITransport(app=app_with_mock_db), base_url="http://test"
     ) as c:
         yield c
+
+
+@pytest.fixture
+def auth_cookies():
+    """Generate a valid JWT access_token cookie for authenticated test requests."""
+    payload = {
+        "sub": "test-user-id",
+        "email": "test@example.com",
+        "session_token": "test-session-token",
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+    }
+    token = jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+    return {"access_token": token}

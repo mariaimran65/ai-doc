@@ -1,34 +1,33 @@
-import io
+import os
+import tempfile
 import uuid
-from pypdf import PdfReader
+
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.vectorstores import PGVector
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+import asyncio
 
-from app.knowledge.embeddings import embed_texts
+from app.config import settings
+from app.knowledge.embeddings import get_embeddings
 
-CHUNK_SIZE = 400
-CHUNK_OVERLAP = 80
-
-
-def extract_text(filename: str, content: bytes) -> str:
-    """Extract plain text from PDF or txt file."""
-    if filename.lower().endswith(".pdf"):
-        reader = PdfReader(io.BytesIO(content))
-        return "\n".join(page.extract_text() or "" for page in reader.pages)
-    return content.decode("utf-8", errors="replace")
+COLLECTION_NAME = "ai_doc_knowledge"
+CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 200
 
 
-def chunk_text(text: str) -> list[str]:
-    """Split text into overlapping word-based chunks."""
-    words = text.split()
-    chunks = []
-    i = 0
-    while i < len(words):
-        chunk = " ".join(words[i : i + CHUNK_SIZE])
-        if chunk.strip():
-            chunks.append(chunk)
-        i += CHUNK_SIZE - CHUNK_OVERLAP
-    return chunks
+def _vectorstore() -> PGVector:
+    """Return a LangChain PGVector store connected to our Postgres instance.
+
+    PGVector manages its own tables (langchain_pg_collection,
+    langchain_pg_embedding) alongside our documents table.
+    """
+    return PGVector(
+        connection_string=settings.pg_dsn,
+        embedding_function=get_embeddings(),
+        collection_name=COLLECTION_NAME,
+    )
 
 
 async def ingest_document(
@@ -37,49 +36,72 @@ async def ingest_document(
     filename: str,
     content: bytes,
 ) -> dict:
-    """Extract, chunk, embed and store a document. Returns summary."""
-    raw_text = extract_text(filename, content)
-    if not raw_text.strip():
-        raise ValueError("Could not extract text from file.")
+    """Load, split, embed and store a document using LangChain tooling.
 
-    chunks = chunk_text(raw_text)
-    if not chunks:
-        raise ValueError("No content chunks generated.")
+    Pipeline:
+      1. PyPDFLoader / TextLoader  — LangChain document loader
+      2. RecursiveCharacterTextSplitter — splits on natural boundaries
+         (paragraphs → sentences → words) so chunks stay semantically coherent
+      3. PGVector.add_documents()  — embeds + stores in pgvector
+      4. INSERT into documents     — records metadata for the UI listing
 
-    # Insert document row
-    doc_id = str(uuid.uuid4())
-    await db.execute(
-        text(
-            "INSERT INTO documents (id, user_id, title, source_name, raw_text) "
-            "VALUES (:id, :user_id, :title, :source_name, :raw_text)"
-        ),
-        {
-            "id": doc_id,
-            "user_id": user_id,
-            "title": filename,
-            "source_name": filename,
-            "raw_text": raw_text,
-        },
-    )
+    Returns a summary dict with document_id, chunk count, and filename.
+    """
+    suffix = ".pdf" if filename.lower().endswith(".pdf") else ".txt"
 
-    # Embed all chunks in one batch
-    vectors = embed_texts(chunks)
+    # Write bytes to a temp file — LangChain loaders require a file path
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(content)
+        tmp_path = tmp.name
 
-    # Insert chunk rows
-    for idx, (chunk, vector) in enumerate(zip(chunks, vectors)):
+    try:
+        if suffix == ".pdf":
+            loader = PyPDFLoader(tmp_path)
+        else:
+            loader = TextLoader(tmp_path, encoding="utf-8")
+
+        docs = loader.load()
+        if not docs or not any(d.page_content.strip() for d in docs):
+            raise ValueError("Could not extract text from file.")
+
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=CHUNK_SIZE,
+            chunk_overlap=CHUNK_OVERLAP,
+        )
+        chunks = splitter.split_documents(docs)
+
+        if not chunks:
+            raise ValueError("No content chunks generated.")
+
+        # Insert document row first so we have the ID for metadata
+        doc_id = str(uuid.uuid4())
         await db.execute(
             text(
-                "INSERT INTO document_chunks (id, document_id, chunk_index, chunk_text, embedding) "
-                "VALUES (:id, :doc_id, :idx, :chunk_text, CAST(:embedding AS vector))"
+                "INSERT INTO documents (id, user_id, title, source_name, raw_text) "
+                "VALUES (:id, :user_id, :title, :source_name, :raw_text)"
             ),
             {
-                "id": str(uuid.uuid4()),
-                "doc_id": doc_id,
-                "idx": idx,
-                "chunk_text": chunk,
-                "embedding": "[" + ",".join(str(v) for v in vector) + "]",
+                "id": doc_id,
+                "user_id": user_id,
+                "title": filename,
+                "source_name": filename,
+                "raw_text": docs[0].page_content[:4000],
             },
         )
+        await db.commit()
 
-    await db.commit()
-    return {"document_id": doc_id, "chunks": len(chunks), "filename": filename}
+        # Tag each chunk with document_id so we can filter on retrieval
+        for chunk in chunks:
+            chunk.metadata["document_id"] = doc_id
+            chunk.metadata["user_id"] = user_id
+
+        # Embed + store — run sync PGVector call in a thread
+        vs = _vectorstore()
+        await asyncio.get_event_loop().run_in_executor(
+            None, lambda: vs.add_documents(chunks)
+        )
+
+        return {"document_id": doc_id, "chunks": len(chunks), "filename": filename}
+
+    finally:
+        os.unlink(tmp_path)

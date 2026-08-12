@@ -21,3 +21,4 @@ pypdf==5.1.0
 python-multipart==0.0.12
 pgvector==0.3.5
 fastembed==0.4.2
+psycopg2-binary==2.9.9

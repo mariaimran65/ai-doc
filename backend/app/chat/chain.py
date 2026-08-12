@@ -1,7 +1,8 @@
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain_community.chat_message_histories import RedisChatMessageHistory
 
 from app.config import settings
 from app.chat.tools import make_user_tools
@@ -16,8 +17,31 @@ requires facts you may not have, or when the user asks about recent developments
 
 Always be concise and technical. When showing code, use markdown code blocks."""
 
+# Redis TTL for chat history: 7 days
+_HISTORY_TTL = 60 * 60 * 24 * 7
 
-def build_executor(user_id: str, email: str) -> AgentExecutor:
+
+def _get_session_history(session_id: str) -> RedisChatMessageHistory:
+    """Return a Redis-backed message history for the given session/user ID.
+
+    History is keyed by session_id so each user has their own persistent
+    conversation that survives server restarts.
+    """
+    return RedisChatMessageHistory(
+        session_id,
+        url=settings.redis_url,
+        ttl=_HISTORY_TTL,
+    )
+
+
+def build_chain(user_id: str, email: str) -> RunnableWithMessageHistory:
+    """Build an AgentExecutor wrapped with Redis-backed conversation history.
+
+    The returned chain is invoked with {"input": <text>} and a configurable
+    session_id, which is used to load/save history from Redis automatically.
+    History persists across server restarts — solving the 'restart wipes memory'
+    problem by storing it in Redis rather than in process memory.
+    """
     llm = ChatAnthropic(
         model="claude-haiku-4-5-20251001",
         temperature=0.3,
@@ -36,15 +60,11 @@ def build_executor(user_id: str, email: str) -> AgentExecutor:
     )
 
     agent = create_tool_calling_agent(llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=False)
+    executor = AgentExecutor(agent=agent, tools=tools, verbose=False)
 
-
-def history_from_messages(messages: list[dict]) -> list:
-    """Convert frontend message list to LangChain message objects."""
-    result = []
-    for m in messages:
-        if m["role"] == "user":
-            result.append(HumanMessage(content=m["content"]))
-        elif m["role"] == "assistant":
-            result.append(AIMessage(content=m["content"]))
-    return result
+    return RunnableWithMessageHistory(
+        executor,
+        _get_session_history,
+        input_messages_key="input",
+        history_messages_key="chat_history",
+    )

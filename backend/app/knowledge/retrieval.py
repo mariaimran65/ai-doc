@@ -1,10 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
+import asyncio
+
 from langchain_anthropic import ChatAnthropic
+from langchain_community.vectorstores import PGVector
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
-from app.knowledge.embeddings import embed_query
+from app.knowledge.embeddings import get_embeddings
+from app.knowledge.ingest import COLLECTION_NAME
 
 TOP_K = 5
 
@@ -12,43 +17,29 @@ ANSWER_PROMPT = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "You are a helpful assistant that answers questions strictly based on the provided document excerpts. "
-            "If the answer is not in the excerpts, say so. Quote relevant parts when helpful. "
-            "Format your answer clearly using markdown.",
+            "You are a helpful assistant that answers questions strictly based on the "
+            "provided document excerpts. If the answer is not in the excerpts, say so. "
+            "Quote relevant parts when helpful. Format your answer clearly using markdown.",
         ),
-        ("human", "Question: {question}\n\n" "Document excerpts:\n{context}"),
+        ("human", "Question: {question}\n\nDocument excerpts:\n{context}"),
     ]
 )
 
 
-async def retrieve_chunks(
-    db: AsyncSession, query: str, document_id: str | None = None
-) -> list[str]:
-    """Find the top-k most similar chunks to the query using pgvector cosine search."""
-    query_vector = embed_query(query)
-    vector_str = "[" + ",".join(str(v) for v in query_vector) + "]"
+def _vectorstore() -> PGVector:
+    return PGVector(
+        connection_string=settings.pg_dsn,
+        embedding_function=get_embeddings(),
+        collection_name=COLLECTION_NAME,
+    )
 
-    if document_id:
-        rows = await db.execute(
-            text(
-                "SELECT chunk_text FROM document_chunks "
-                "WHERE document_id = :doc_id "
-                "ORDER BY embedding <=> CAST(:vec AS vector) "
-                "LIMIT :k"
-            ),
-            {"doc_id": document_id, "vec": vector_str, "k": TOP_K},
-        )
-    else:
-        rows = await db.execute(
-            text(
-                "SELECT chunk_text FROM document_chunks "
-                "ORDER BY embedding <=> CAST(:vec AS vector) "
-                "LIMIT :k"
-            ),
-            {"vec": vector_str, "k": TOP_K},
-        )
 
-    return [row[0] for row in rows.fetchall()]
+def _format_docs(docs) -> str:
+    if not docs:
+        return ""
+    return "\n\n---\n\n".join(
+        f"[Excerpt {i + 1}]\n{doc.page_content}" for i, doc in enumerate(docs)
+    )
 
 
 async def answer_question(
@@ -56,21 +47,44 @@ async def answer_question(
     question: str,
     document_id: str | None = None,
 ) -> str:
-    """Retrieve relevant chunks and generate an answer with Claude."""
-    chunks = await retrieve_chunks(db, question, document_id)
+    """Retrieve relevant chunks and answer using a LangChain LCEL chain.
 
-    if not chunks:
-        return "No documents found. Please upload a document first."
+    Pipeline:
+      1. PGVector.as_retriever()     — cosine similarity search in pgvector
+      2. _format_docs()              — format retrieved chunks into context string
+      3. ANSWER_PROMPT | llm         — Claude generates an answer grounded in chunks
+      4. StrOutputParser()           — extract plain text from the model response
 
-    context = "\n\n---\n\n".join(
-        f"[Excerpt {i + 1}]\n{chunk}" for i, chunk in enumerate(chunks)
-    )
+    The retriever is optionally filtered to a specific document_id so Q&A
+    can target a single uploaded document.
+    """
+    vs = _vectorstore()
+
+    search_kwargs: dict = {"k": TOP_K}
+    if document_id:
+        search_kwargs["filter"] = {"document_id": document_id}
+
+    retriever = vs.as_retriever(search_type="similarity", search_kwargs=search_kwargs)
 
     llm = ChatAnthropic(
         model="claude-haiku-4-5-20251001",
         temperature=0.1,
         api_key=settings.anthropic_api_key,
     )
-    chain = ANSWER_PROMPT | llm
-    response = chain.invoke({"question": question, "context": context})
-    return response.content
+
+    # LCEL retrieval chain: retrieve → format → prompt → llm → parse
+    chain = (
+        {"context": retriever | _format_docs, "question": RunnablePassthrough()}
+        | ANSWER_PROMPT
+        | llm
+        | StrOutputParser()
+    )
+
+    result = await asyncio.get_event_loop().run_in_executor(
+        None, lambda: chain.invoke(question)
+    )
+
+    if not result or not result.strip():
+        return "No documents found. Please upload a document first."
+
+    return result

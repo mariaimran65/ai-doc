@@ -34,9 +34,28 @@ Read `00-overview.md` completely before touching anything else. It explains the 
 
 New phases are added here as the programme grows. Each extends the same codebase — nothing already built is discarded.
 
+## Live site
+
+**[https://aidoc.talent.techsupersonic.com/](https://aidoc.talent.techsupersonic.com/)**
+
+Deployed via Dokploy from the `main` branch. PRs merge in phase order (1 → 5); the live site updates automatically on each merge.
+
 ## Tech stack
 
-PostgreSQL · pgvector · Redis · Docker · GitHub Actions · FastAPI or Next.js · LangChain · LangGraph · LangServe · LangSmith · Claude API or OpenAI API
+PostgreSQL · pgvector · Redis · Docker · GitHub Actions · FastAPI · React 18 + TypeScript + Vite · LangChain · LangGraph · LangSmith · Claude API (Anthropic)
+
+## Phase 5 status
+
+| Area | Status | Notes |
+|---|---|---|
+| LangSmith tracing | Done | `LANGCHAIN_TRACING_V2=true` wired in Docker env |
+| Metrics endpoint (`/metrics`) | Done | Request counts, latency, model usage tracked in DB |
+| Redis chat memory | Done | `RedisChatMessageHistory` keyed by user_id, 7-day TTL |
+| LangChain RAG tools | Done | `PyPDFLoader`, `RecursiveCharacterTextSplitter`, `PGVector`, LCEL chain |
+| Tests — chat, agents, knowledge | Done | `test_chat.py`, `test_agents.py`, `test_knowledge.py` added |
+| OWASP security review | Not done | Identified as needed; not implemented this phase |
+| Evals / LangSmith datasets | Not done | No eval harness written yet |
+| Case study write-up | Not done | Deferred — content for next review |
 
 ---
 
