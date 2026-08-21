@@ -1,62 +1,111 @@
-# DevAI-Doc — Production Stack
+# AI-Doc — Production Stack
 #
 # Used by Dokploy to run the application in production.
-# This file is deliberately different from docker-compose.yml.
-# Read the differences and understand each one before deploying.
+# Key differences from docker-compose.yml:
+#   - Database and Redis ports are NOT exposed
+#   - Source code is NOT mounted — built at deploy time
+#   - Restart policies ensure services recover automatically
+#   - Health checks on all services
+#   - Traefik labels are defined here as the single source of routing config
 #
-# Key differences from the development compose file:
-#   - Database port is NOT exposed to the internet
-#   - Source code is NOT mounted as a volume — the image is the artefact
-#   - No debug flags or hot-reload commands
-#   - Redis port is NOT exposed — only accessible within the Docker network
-#   - Restart policies are set so services recover from crashes automatically
+# IMPORTANT: Do NOT configure domains for api/frontend in Dokploy's Domains UI.
+# That causes duplicate/conflicting labels. This file owns all routing config.
 #
 # Environment variables are set in the Dokploy secrets panel.
-# Never put real values in this file. Never commit secrets to the repository.
+# Never put real values in this file. Never commit secrets.
 
 services:
 
-  app:
-    image: ${REGISTRY_IMAGE}:${IMAGE_TAG:-latest}   # built image, not source mount
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
-    ports:
-      - "3000:3000"                                 # only the app port is exposed; adjust as needed
-    env_file:
-      - .env                                        # Dokploy injects this from the secrets panel
+    networks:
+      - default
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-doc-api.rule=Host(`api-aidoc.talent.techsupersonic.com`)"
+      - "traefik.http.routers.ai-doc-api.entrypoints=websecure"
+      - "traefik.http.routers.ai-doc-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ai-doc-api.loadbalancer.server.port=8000"
+      - "traefik.docker.network=dokploy-network"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES}
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
+      GOOGLE_OAUTH_REDIRECT_URI: ${GOOGLE_OAUTH_REDIRECT_URI}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 20s
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    networks:
+      - default
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-doc-frontend.rule=Host(`aidoc.talent.techsupersonic.com`)"
+      - "traefik.http.routers.ai-doc-frontend.entrypoints=websecure"
+      - "traefik.http.routers.ai-doc-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ai-doc-frontend.loadbalancer.server.port=5173"
+      - "traefik.docker.network=dokploy-network"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "node", "-e", "const h=require('http');h.get('http://localhost:5173',(r)=>{process.exit(r.statusCode<500?0:1)}).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   db:
     image: pgvector/pgvector:pg16
     restart: unless-stopped
-    # No ports section here — the database is NOT exposed to the internet.
-    # The app container reaches it via the service name "db" on the internal network.
-    # Exposing the database port in production is a critical security mistake.
+    networks:
+      - default
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ../schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U $$DB_USER -d $$DB_NAME"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    # No ports section — Redis is not exposed to the internet in production.
+    networks:
+      - default
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -65,3 +114,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  default:
+  dokploy-network:
+    external: true

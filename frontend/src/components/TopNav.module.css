@@ -1,0 +1,122 @@
+.nav {
+  height: 48px;
+  background: var(--surface-3);
+  border-bottom: 0.5px solid #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.logoDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue-border);
+}
+
+.links {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.link {
+  font-size: 13px;
+  color: var(--text-5);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  border: none;
+  background: none;
+  transition: color 0.12s, background 0.12s;
+}
+
+.link:hover {
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+
+.active {
+  color: var(--text-1);
+  background: var(--surface-2);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--blue-btn);
+  border: 0.5px solid var(--blue-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue-text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.avatarMenu {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.dropdownEmail {
+  font-size: 11px;
+  color: var(--text-5);
+  padding: 6px 10px 8px;
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.dropdownBtn {
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: var(--text-3);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.dropdownBtn:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}

@@ -1,0 +1,15 @@
+.page {
+  padding: 2.5rem;
+  color: #e0e0e0;
+}
+
+.page h1 {
+  font-size: 1.6rem;
+  color: #fff;
+  margin: 0 0 0.5rem;
+}
+
+.sub {
+  color: #888;
+  margin: 0;
+}

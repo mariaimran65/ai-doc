@@ -1,5 +1,7 @@
 # AI-Doc
 
+[![CI](https://github.com/mariaimran65/ai-doc/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mariaimran65/ai-doc/actions/workflows/ci.yml)
+
 A personal developer platform and AI-engineering portfolio. You build this application phase by phase, each one adding a new capability to the same codebase. The platform is designed to grow without a fixed end point — new phases are added to the programme as you progress, and each phase you complete makes the next one faster because the foundation is your own work and you understand every part of it.
 
 ## What the platform is
@@ -34,9 +36,28 @@ Read `00-overview.md` completely before touching anything else. It explains the 
 
 New phases are added here as the programme grows. Each extends the same codebase — nothing already built is discarded.
 
+## Live site
+
+**[https://aidoc.talent.techsupersonic.com/](https://aidoc.talent.techsupersonic.com/)**
+
+Deployed via Dokploy from the `main` branch. PRs merge in phase order (1 → 5); the live site updates automatically on each merge.
+
 ## Tech stack
 
-PostgreSQL · pgvector · Redis · Docker · GitHub Actions · FastAPI or Next.js · LangChain · LangGraph · LangServe · LangSmith · Claude API or OpenAI API
+PostgreSQL · pgvector · Redis · Docker · GitHub Actions · FastAPI · React 18 + TypeScript + Vite · LangChain · LangGraph · LangSmith · Claude API (Anthropic)
+
+## Phase 5 status
+
+| Area | Status | Notes |
+|---|---|---|
+| LangSmith tracing | Done | `LANGCHAIN_TRACING_V2=true` wired in Docker env |
+| Metrics endpoint (`/metrics`) | Done | Request counts, latency, model usage tracked in DB |
+| Redis chat memory | Done | `RedisChatMessageHistory` keyed by user_id, 7-day TTL |
+| LangChain RAG tools | Done | `PyPDFLoader`, `RecursiveCharacterTextSplitter`, `PGVector`, LCEL chain |
+| Tests — chat, agents, knowledge | Done | `test_chat.py`, `test_agents.py`, `test_knowledge.py` added |
+| OWASP security review | Not done | Identified as needed; not implemented this phase |
+| Evals / LangSmith datasets | Not done | No eval harness written yet |
+| Case study write-up | Not done | Deferred — content for next review |
 
 ---
 

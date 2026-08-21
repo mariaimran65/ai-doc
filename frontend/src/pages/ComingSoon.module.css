@@ -1,0 +1,47 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 60px 28px;
+  gap: 12px;
+}
+
+.lockWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  border: 0.5px solid var(--border-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-6);
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--text-5);
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.badge {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: var(--text-6);
+  border: 0.5px solid var(--border-sub);
+}
