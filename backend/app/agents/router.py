@@ -1,7 +1,7 @@
 import asyncio
 import json
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
@@ -25,6 +25,9 @@ async def run_agent(
     Each node execution emits one or more step events so the UI can show
     live agent activity. A final event carries the complete output.
     """
+    if not body.task.strip():
+        raise HTTPException(status_code=400, detail="Task must not be empty")
+
     graph = build_graph()
 
     async def event_generator():
