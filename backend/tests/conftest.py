@@ -1,12 +1,27 @@
+import asyncio
+
 import pytest
 import jwt
 from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
 from httpx import AsyncClient, ASGITransport
+from sse_starlette.sse import AppStatus
 
 from main import app
 from app.database import get_db
 from app.config import settings
+
+
+@pytest.fixture(autouse=True)
+async def reset_sse_app_status():
+    # AppStatus.should_exit_event is a module-level asyncio.Event bound to
+    # whichever loop first imported sse_starlette. pytest-asyncio creates a
+    # fresh loop per test function, so the singleton would be from the wrong
+    # loop and raise "bound to a different event loop" in every SSE test.
+    # Re-creating it here (inside an async fixture) binds it to this test's loop.
+    AppStatus.should_exit = False
+    AppStatus.should_exit_event = asyncio.Event()
+    yield
 
 
 @pytest.fixture
