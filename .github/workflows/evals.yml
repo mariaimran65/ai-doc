@@ -1,0 +1,59 @@
+# AI-Doc — Evaluation harness (on-demand)
+#
+# This workflow makes real LLM calls (Anthropic API) so it is intentionally
+# NOT triggered on every push. Run it manually before a release or after a
+# significant prompt or retrieval change.
+#
+# Usage: GitHub → Actions → "Eval Harness" → Run workflow
+#
+# Required secrets (set in repo Settings → Secrets):
+#   ANTHROPIC_API_KEY   — Anthropic API key for judge calls
+#   EVAL_JWT_TOKEN      — Valid JWT for the deployed AI-Doc API
+#   LANGCHAIN_API_KEY   — LangSmith API key (optional, enables trace recording)
+
+name: Eval Harness
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "API base URL to evaluate against"
+        required: false
+        default: "https://aidoc.talent.techsupersonic.com"
+
+jobs:
+  evals:
+    name: Run LLM-as-judge evals
+    runs-on: ubuntu-latest
+
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      EVAL_JWT_TOKEN: ${{ secrets.EVAL_JWT_TOKEN }}
+      LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+      LANGCHAIN_TRACING_V2: "true"
+      LANGCHAIN_PROJECT: "ai-doc"
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install anthropic httpx langchain-core langsmith
+
+      - name: Run eval harness
+        run: |
+          python evals/run_evals.py \
+            --base-url "${{ github.event.inputs.base_url }}" \
+            --output evals/results-${{ github.run_id }}.json
+
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-${{ github.run_id }}
+          path: evals/results-${{ github.run_id }}.json
+          retention-days: 30

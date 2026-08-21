@@ -1,0 +1,95 @@
+{
+  "version": "1.0",
+  "description": "AI-Doc evaluation set — 12 examples across 3 categories. Scored by LLM-as-judge on accuracy, completeness, and groundedness (1–3 each, max 9 per example, max 108 total).",
+  "categories": {
+    "chat": "LangChain chatbot with tool use (Phase 2). Correct answer requires calling a tool, not recalling from training data.",
+    "agents": "LangGraph multi-agent pipeline (Phase 3). Correct answer requires the supervisor to route to the right worker and produce structured output.",
+    "rag": "RAG pipeline (Phase 4). Correct answer must be grounded in the retrieved document chunks, not the model's training knowledge."
+  },
+  "examples": [
+    {
+      "id": "chat-001",
+      "category": "chat",
+      "input": "Search the web for the latest version of LangChain and tell me when it was released.",
+      "reference": "The assistant should use the DuckDuckGo search tool to look up the LangChain release and report what it finds. It must not fabricate a version number from training data.",
+      "requires_tool": "duckduckgo_search"
+    },
+    {
+      "id": "chat-002",
+      "category": "chat",
+      "input": "What is the current weather like in London?",
+      "reference": "The assistant should use a search tool to look up current weather. It must not invent weather data and should acknowledge it is searching for live information.",
+      "requires_tool": "duckduckgo_search"
+    },
+    {
+      "id": "chat-003",
+      "category": "chat",
+      "input": "Find me three recent news headlines about AI safety.",
+      "reference": "The assistant should use the DuckDuckGo search tool and return three distinct headlines with source attribution. Headlines should be clearly recent and not fabricated.",
+      "requires_tool": "duckduckgo_search"
+    },
+    {
+      "id": "chat-004",
+      "category": "chat",
+      "input": "Who won the most recent US Open tennis championship?",
+      "reference": "The assistant must call a search tool rather than answering from training data, then report the winner it found. It should note if the information is from a search result.",
+      "requires_tool": "duckduckgo_search"
+    },
+    {
+      "id": "agents-001",
+      "category": "agents",
+      "input": "Research the pros and cons of using Redis for session storage.",
+      "reference": "The supervisor should route this to the researcher worker. The response should include multiple distinct pros and cons of Redis session storage, structured clearly. It should not just list generic caching advantages.",
+      "expected_worker": "researcher"
+    },
+    {
+      "id": "agents-002",
+      "category": "agents",
+      "input": "Summarise the key points from this text: LangGraph is a library for building stateful, multi-actor applications with LLMs. It extends LangChain and uses a graph abstraction where nodes are functions and edges control flow.",
+      "reference": "The supervisor should route this to the summariser worker. The output should be a concise summary that preserves the key facts: stateful, multi-actor, graph abstraction, nodes are functions, edges control flow.",
+      "expected_worker": "summariser"
+    },
+    {
+      "id": "agents-003",
+      "category": "agents",
+      "input": "Look up and explain what vector embeddings are and why they are used in RAG systems.",
+      "reference": "The supervisor should route to the researcher worker. The response should explain that embeddings are numerical representations of text that capture semantic meaning, and that RAG uses them for similarity search to find relevant chunks.",
+      "expected_worker": "researcher"
+    },
+    {
+      "id": "agents-004",
+      "category": "agents",
+      "input": "Condense the following into two sentences: The transformer architecture, introduced in the paper Attention Is All You Need in 2017, replaced recurrent neural networks for sequence modelling tasks. Its self-attention mechanism allows the model to weigh the relevance of each token to every other token in the sequence, enabling parallelisation during training.",
+      "reference": "The supervisor should route to the summariser. The condensed output must retain: transformer architecture, 2017, replaced RNNs, self-attention mechanism, token relevance weighting, enables parallelisation.",
+      "expected_worker": "summariser"
+    },
+    {
+      "id": "rag-001",
+      "category": "rag",
+      "input": "According to the uploaded document, what is the main purpose of the system described?",
+      "reference": "The answer must come from the retrieved document chunks, not from the model's training knowledge. It should cite or closely paraphrase specific language from the document. If no document is uploaded, the system should say so rather than fabricating an answer.",
+      "grounding_required": true
+    },
+    {
+      "id": "rag-002",
+      "category": "rag",
+      "input": "What specific steps or process does the document describe? List them in order.",
+      "reference": "The answer must enumerate steps found in the document in the order they appear. The system must not invent steps or reorder them. It should indicate if the document does not contain a clear step-by-step process.",
+      "grounding_required": true
+    },
+    {
+      "id": "rag-003",
+      "category": "rag",
+      "input": "Does the document mention any limitations or risks? If so, what are they?",
+      "reference": "The answer must only report limitations or risks that appear in the retrieved chunks. If none are present, the system should say the document does not address this rather than inventing limitations.",
+      "grounding_required": true
+    },
+    {
+      "id": "rag-004",
+      "category": "rag",
+      "input": "What terminology or technical concepts does the document introduce? Give a brief definition of each based on how the document uses it.",
+      "reference": "Definitions must be derived from how the terms are used in the retrieved chunks, not from the model's general knowledge. The system should quote or closely paraphrase the document when defining each term.",
+      "grounding_required": true
+    }
+  ]
+}

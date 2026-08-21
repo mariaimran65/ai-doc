@@ -1,5 +1,7 @@
 # AI-Doc
 
+[![CI](https://github.com/mariaimran65/ai-doc/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mariaimran65/ai-doc/actions/workflows/ci.yml)
+
 A personal developer platform and AI-engineering portfolio. You build this application phase by phase, each one adding a new capability to the same codebase. The platform is designed to grow without a fixed end point — new phases are added to the programme as you progress, and each phase you complete makes the next one faster because the foundation is your own work and you understand every part of it.
 
 ## What the platform is
