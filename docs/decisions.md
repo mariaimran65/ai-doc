@@ -110,4 +110,38 @@ What are the known risks or tradeoffs you are accepting?
 
 ---
 
+## ADR-005 — LLM provider: Claude Haiku instead of OpenAI GPT
+
+**Date:** 2026-07-10  
+**Status:** Accepted  
+**Full record:** [docs/decisions/ADR-005-llm-provider.md](decisions/ADR-005-llm-provider.md)
+
+### Context
+The brief offered a choice of LLM provider (`langchain-anthropic` or `langchain-openai`). An Anthropic API key was available; an OpenAI key was not. LangChain abstracts both providers identically at the application layer.
+
+### Decision
+Claude Haiku (`claude-haiku-4-5-20251001`) via `langchain-anthropic` is used across all phases. Switching providers is a one-line change in each chain file — no other application logic would need to change.
+
+### Consequences
+Lower cost per request during development. No OpenAI account setup required. Risk: dependency on Anthropic API availability (same risk as OpenAI). Model name includes a date suffix that must be updated when Anthropic deprecates a version.
+
+---
+
+## ADR-006 — Embedding model: FastEmbed (BAAI/bge-small-en-v1.5, 384 dims)
+
+**Date:** 2026-07-10  
+**Status:** Accepted  
+**Full record:** [docs/decisions/ADR-006-embedding-model.md](decisions/ADR-006-embedding-model.md)
+
+### Context
+The brief specified `OpenAIEmbeddings` with `text-embedding-3-small` (1536-dimensional). The brief also explicitly required an ADR if a different model was used: *"If you are using a different embedding model, the dimension must match exactly — document this in an ADR."*
+
+### Decision
+FastEmbed with BAAI/bge-small-en-v1.5 (384-dimensional, local inference) is used instead. The `embedding` column in `document_chunks` was changed from `VECTOR(1536)` to `VECTOR(384)`. The embedding model used at upload time and at query time must always be the same.
+
+### Consequences
+No API cost or key required for embedding. Embedding works offline. Retrieval quality is comparable for English technical documents. Switching to OpenAIEmbeddings later requires re-ingesting all documents (vectors are dimension-incompatible).
+
+---
+
 *Add new ADRs below this line as the project progresses. Each phase requires at least one new ADR. By Phase 5, the ADR log should contain a minimum of ten records covering all major decisions across the system.*

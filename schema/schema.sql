@@ -151,10 +151,11 @@ CREATE INDEX IF NOT EXISTS idx_documents_user_id ON documents (user_id);
 -- ---------------------------------------------------------------------------
 
 -- One row per chunk of a document. Each chunk has a vector embedding.
--- The embedding dimension is 1536, matching OpenAI text-embedding-3-small.
--- If using a different embedding model, the dimension must match exactly.
--- Changing the dimension after data has been inserted requires dropping
--- and recreating the column — document this choice in an ADR and commit to it.
+-- Embedding dimension is 384, matching FastEmbed BAAI/bge-small-en-v1.5.
+-- The brief's default was 1536 (OpenAI text-embedding-3-small); this project
+-- uses a local model instead — see docs/decisions/ADR-006-embedding-model.md.
+-- Changing the dimension requires dropping this table and re-ingesting all
+-- documents. The model used at upload time and at query time must always match.
 CREATE TABLE IF NOT EXISTS document_chunks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     document_id UUID NOT NULL REFERENCES documents (id) ON DELETE CASCADE,
