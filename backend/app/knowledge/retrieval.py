@@ -80,7 +80,7 @@ async def answer_question(
         | StrOutputParser()
     )
 
-    result = await asyncio.get_event_loop().run_in_executor(
+    result = await asyncio.get_running_loop().run_in_executor(
         None, lambda: chain.invoke(question)
     )
 

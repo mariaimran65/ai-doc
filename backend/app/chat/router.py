@@ -43,7 +43,7 @@ async def chat(
     chain = build_chain(user_id=user_id, email=current_user["email"])
 
     async def event_generator():
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         try:
             result = await loop.run_in_executor(

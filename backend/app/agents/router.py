@@ -31,7 +31,7 @@ async def run_agent(
     graph = build_graph()
 
     async def event_generator():
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         initial_state = {
             "task": body.task,

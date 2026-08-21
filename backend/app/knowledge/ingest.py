@@ -97,7 +97,7 @@ async def ingest_document(
 
         # Embed + store — run sync PGVector call in a thread
         vs = _vectorstore()
-        await asyncio.get_event_loop().run_in_executor(
+        await asyncio.get_running_loop().run_in_executor(
             None, lambda: vs.add_documents(chunks)
         )
 
