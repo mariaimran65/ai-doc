@@ -1,4 +1,4 @@
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import create_tool_calling_agent, AgentExecutor
@@ -42,11 +42,10 @@ def build_chain(user_id: str, email: str) -> RunnableWithMessageHistory:
     History persists across server restarts — solving the 'restart wipes memory'
     problem by storing it in Redis rather than in process memory.
     """
-    llm = ChatAnthropic(
-        model="claude-haiku-4-5-20251001",
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash",
         temperature=0.3,
-        streaming=True,
-        api_key=settings.anthropic_api_key,
+        google_api_key=settings.google_api_key,
     )
     tools = make_user_tools(user_id, email)
 

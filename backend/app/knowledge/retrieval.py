@@ -1,6 +1,6 @@
 import asyncio
 
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import PGVector
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -66,10 +66,10 @@ async def answer_question(
 
     retriever = vs.as_retriever(search_type="similarity", search_kwargs=search_kwargs)
 
-    llm = ChatAnthropic(
-        model="claude-haiku-4-5-20251001",
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash",
         temperature=0.1,
-        api_key=settings.anthropic_api_key,
+        google_api_key=settings.google_api_key,
     )
 
     # LCEL retrieval chain: retrieve → format → prompt → llm → parse
