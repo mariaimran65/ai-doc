@@ -1,7 +1,7 @@
 import operator
 from typing import TypedDict, Annotated, Literal
 
-from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
 from pydantic import BaseModel
@@ -38,10 +38,10 @@ def supervisor_node(state: AgentState) -> dict:
             next="summariser", reasoning="All workers complete."
         )
     else:
-        llm = ChatAnthropic(
-            model="claude-haiku-4-5-20251001",
+        llm = ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
             temperature=0,
-            api_key=settings.anthropic_api_key,
+            google_api_key=settings.google_api_key,
         ).with_structured_output(SupervisorDecision)
 
         prompt = ChatPromptTemplate.from_messages(

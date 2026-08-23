@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     allowed_origins: str = "http://localhost:5173"
     frontend_url: str = "http://localhost:5173"
 
-    anthropic_api_key: str = ""
+    google_api_key: str = ""
 
     langchain_tracing_v2: str = "false"
     langchain_api_key: str = ""
