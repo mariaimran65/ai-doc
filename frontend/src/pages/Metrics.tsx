@@ -68,19 +68,6 @@ export default function Metrics() {
   return (
     <div className={styles.shell}>
 
-      {/* LangSmith banner */}
-      <div className={styles.banner}>
-        <IconChartBar size={20} className={styles.bannerIcon} />
-        <div className={styles.bannerText}>
-          <p className={styles.bannerTitle}>LangSmith Tracing</p>
-          <p className={styles.bannerDesc}>
-            Set <code>LANGCHAIN_TRACING_V2=true</code> and <code>LANGCHAIN_API_KEY=ls__...</code> in your{' '}
-            <code>.env</code> to trace every Chat, Agent, and Knowledge call at{' '}
-            <code>smith.langchain.com</code>.
-          </p>
-        </div>
-      </div>
-
       {/* Stat cards */}
       <div>
         <p className={styles.sectionTitle}>Platform counts</p>
