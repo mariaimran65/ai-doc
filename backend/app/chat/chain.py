@@ -43,7 +43,7 @@ def build_chain(user_id: str, email: str) -> RunnableWithMessageHistory:
     problem by storing it in Redis rather than in process memory.
     """
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         temperature=0.3,
         google_api_key=settings.google_api_key,
     )
