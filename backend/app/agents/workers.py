@@ -7,7 +7,7 @@ from app.config import settings
 
 def _llm() -> ChatGoogleGenerativeAI:
     return ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
+        model="gemini-2.0-flash",
         temperature=0.3,
         google_api_key=settings.google_api_key,
     )

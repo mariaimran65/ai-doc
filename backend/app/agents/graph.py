@@ -39,7 +39,7 @@ def supervisor_node(state: AgentState) -> dict:
         )
     else:
         llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-2.0-flash",
             temperature=0,
             google_api_key=settings.google_api_key,
         ).with_structured_output(SupervisorDecision)
