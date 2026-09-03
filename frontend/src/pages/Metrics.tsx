@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { IconChartBar } from '@tabler/icons-react'
 import styles from './Metrics.module.css'
 
 interface Counts {
