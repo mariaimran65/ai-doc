@@ -19,6 +19,23 @@ app = FastAPI(title="AI-Doc API", version="0.1.0")
 
 @app.on_event("startup")
 async def check_db() -> None:
+    import socket
+    from app.database import _db_host, _db_port
+    host = _db_host
+    port = int(_db_port)
+    try:
+        ip = socket.gethostbyname(host)
+        logger.info("DB hostname '%s' resolves to IP: %s", host, ip)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(3)
+        result = sock.connect_ex((ip, port))
+        sock.close()
+        if result == 0:
+            logger.info("DB raw TCP connect to %s:%s — OK", ip, port)
+        else:
+            logger.error("DB raw TCP connect to %s:%s — FAILED (errno %s)", ip, port, result)
+    except Exception as exc:
+        logger.error("DB hostname '%s' resolution failed: %s", host, exc)
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))

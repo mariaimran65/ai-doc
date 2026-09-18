@@ -22,9 +22,9 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
-      - internal
       - dokploy-network
     labels:
+      - "deploy.round=6"
       - "traefik.enable=true"
       - "traefik.http.routers.ai-doc-api.rule=Host(`api-aidoc.talent.techsupersonic.com`)"
       - "traefik.http.routers.ai-doc-api.entrypoints=websecure"
@@ -68,9 +68,9 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
-      - internal
       - dokploy-network
     labels:
+      - "deploy.round=6"
       - "traefik.enable=true"
       - "traefik.http.routers.ai-doc-frontend.rule=Host(`aidoc.talent.techsupersonic.com`)"
       - "traefik.http.routers.ai-doc-frontend.entrypoints=websecure"
@@ -89,8 +89,11 @@ services:
   db:
     image: pgvector/pgvector:pg16
     restart: unless-stopped
+    command: postgres -c listen_addresses='*'
     networks:
-      - internal
+      - dokploy-network
+    labels:
+      - "deploy.round=6"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
@@ -109,7 +112,9 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     networks:
-      - internal
+      - dokploy-network
+    labels:
+      - "deploy.round=6"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -120,6 +125,5 @@ volumes:
   postgres_data:
 
 networks:
-  internal:
   dokploy-network:
     external: true
