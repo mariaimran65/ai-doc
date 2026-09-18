@@ -16,7 +16,7 @@ logging.getLogger(__name__).info(
 
 DATABASE_URL = (
     f"postgresql+asyncpg://{_db_user}:{_db_password}@{_db_host}:{_db_port}/{_db_name}"
-    "?ssl=false"
+    "?ssl=disable"
 )
 
 engine = create_async_engine(DATABASE_URL, echo=False)
