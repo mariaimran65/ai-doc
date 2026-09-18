@@ -42,6 +42,7 @@ def supervisor_node(state: AgentState) -> dict:
             model="gemini-3.6-flash",
             temperature=0,
             google_api_key=settings.google_api_key,
+            thinking_budget=0,
         ).with_structured_output(SupervisorDecision)
 
         prompt = ChatPromptTemplate.from_messages(

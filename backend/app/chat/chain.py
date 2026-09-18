@@ -46,6 +46,7 @@ def build_chain(user_id: str, email: str) -> RunnableWithMessageHistory:
         model="gemini-3.6-flash",
         temperature=0.3,
         google_api_key=settings.google_api_key,
+        thinking_budget=0,
     )
     tools = make_user_tools(user_id, email)
 
