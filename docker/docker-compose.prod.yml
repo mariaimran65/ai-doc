@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
-      - internal
+      - default
       - dokploy-network
     labels:
       - "traefik.enable=true"
@@ -68,7 +68,7 @@ services:
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
-      - internal
+      - default
       - dokploy-network
     labels:
       - "traefik.enable=true"
@@ -89,8 +89,6 @@ services:
   db:
     image: pgvector/pgvector:pg16
     restart: unless-stopped
-    networks:
-      - internal
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
@@ -108,8 +106,6 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    networks:
-      - internal
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -120,6 +116,5 @@ volumes:
   postgres_data:
 
 networks:
-  internal:
   dokploy-network:
     external: true
