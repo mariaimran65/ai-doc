@@ -25,6 +25,7 @@ services:
       - default
       - dokploy-network
     labels:
+      - "deploy.round=5"
       - "traefik.enable=true"
       - "traefik.http.routers.ai-doc-api.rule=Host(`api-aidoc.talent.techsupersonic.com`)"
       - "traefik.http.routers.ai-doc-api.entrypoints=websecure"
@@ -71,6 +72,7 @@ services:
       - default
       - dokploy-network
     labels:
+      - "deploy.round=5"
       - "traefik.enable=true"
       - "traefik.http.routers.ai-doc-frontend.rule=Host(`aidoc.talent.techsupersonic.com`)"
       - "traefik.http.routers.ai-doc-frontend.entrypoints=websecure"
@@ -92,6 +94,8 @@ services:
     command: postgres -c listen_addresses='*'
     networks:
       - dokploy-network
+    labels:
+      - "deploy.round=5"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
@@ -111,6 +115,8 @@ services:
     restart: unless-stopped
     networks:
       - dokploy-network
+    labels:
+      - "deploy.round=5"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
