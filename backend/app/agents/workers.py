@@ -1,16 +1,16 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from duckduckgo_search import DDGS
 
 from app.config import settings
 
 
-def _llm() -> ChatGoogleGenerativeAI:
-    return ChatGoogleGenerativeAI(
-        model="gemini-3.6-flash",
+def _llm() -> ChatOpenAI:
+    return ChatOpenAI(
+        model=settings.llm_model,
+        api_key=settings.llm_api_key,
+        base_url=settings.llm_base_url,
         temperature=0.3,
-        google_api_key=settings.google_api_key,
-        model_kwargs={"thinking_config": {"thinking_budget": 0}},
     )
 
 

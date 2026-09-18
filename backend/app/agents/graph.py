@@ -1,7 +1,7 @@
 import operator
 from typing import TypedDict, Annotated, Literal
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
 from pydantic import BaseModel
@@ -38,11 +38,11 @@ def supervisor_node(state: AgentState) -> dict:
             next="summariser", reasoning="All workers complete."
         )
     else:
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-3.6-flash",
+        llm = ChatOpenAI(
+            model=settings.llm_model,
+            api_key=settings.llm_api_key,
+            base_url=settings.llm_base_url,
             temperature=0,
-            google_api_key=settings.google_api_key,
-            model_kwargs={"thinking_config": {"thinking_budget": 0}},
         ).with_structured_output(SupervisorDecision)
 
         prompt = ChatPromptTemplate.from_messages(

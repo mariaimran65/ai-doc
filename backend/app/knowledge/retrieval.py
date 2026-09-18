@@ -1,6 +1,6 @@
 import asyncio
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import PGVector
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -66,11 +66,11 @@ async def answer_question(
 
     retriever = vs.as_retriever(search_type="similarity", search_kwargs=search_kwargs)
 
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-3.6-flash",
+    llm = ChatOpenAI(
+        model=settings.llm_model,
+        api_key=settings.llm_api_key,
+        base_url=settings.llm_base_url,
         temperature=0.1,
-        google_api_key=settings.google_api_key,
-        model_kwargs={"thinking_config": {"thinking_budget": 0}},
     )
 
     # LCEL retrieval chain: retrieve → format → prompt → llm → parse

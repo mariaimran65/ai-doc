@@ -55,7 +55,7 @@ async def chat(
                     config={"configurable": {"session_id": user_id}},
                 ),
             )
-            output = result if isinstance(result, str) else result.get("output", "")
+            output = result.get("output", "")
             chunk_size = 4
             for i in range(0, len(output), chunk_size):
                 yield {"data": json.dumps({"token": output[i : i + chunk_size]})}

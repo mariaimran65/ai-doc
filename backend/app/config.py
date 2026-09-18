@@ -25,6 +25,10 @@ class Settings(BaseSettings):
 
     google_api_key: str = ""
 
+    llm_api_key: str = ""
+    llm_base_url: str = "https://api.openai.com/v1"
+    llm_model: str = "gpt-4o-mini"
+
     langchain_tracing_v2: str = "false"
     langchain_api_key: str = ""
     langchain_project: str = "ai-doc"

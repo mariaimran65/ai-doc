@@ -1,19 +1,21 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.output_parsers import StrOutputParser
+from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 
 from app.config import settings
+from app.chat.tools import make_user_tools
 
-_SYSTEM_PROMPT = """You are an AI assistant embedded in the AI-Doc platform — a training \
+SYSTEM_PROMPT = """You are an AI assistant embedded in the AI-Doc platform — a training \
 programme that teaches production AI engineering. You help the signed-in user with \
 questions about LangChain, LangGraph, RAG pipelines, FastAPI, Docker, and AI \
 engineering in general.
 
-Always be concise and technical. When showing code, use markdown code blocks.
+You have access to a web search tool for current information. Use it when the question \
+requires facts you may not have, or when the user asks about recent developments.
 
-Signed-in user: {email} (ID: {user_id})"""
+Always be concise and technical. When showing code, use markdown code blocks."""
 
 _HISTORY_TTL = 60 * 60 * 24 * 7
 
@@ -27,26 +29,28 @@ def _get_session_history(session_id: str) -> RedisChatMessageHistory:
 
 
 def build_chain(user_id: str, email: str) -> RunnableWithMessageHistory:
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-3.6-flash",
+    llm = ChatOpenAI(
+        model=settings.llm_model,
+        api_key=settings.llm_api_key,
+        base_url=settings.llm_base_url,
         temperature=0.3,
-        google_api_key=settings.google_api_key,
     )
-
-    system_message = _SYSTEM_PROMPT.format(email=email, user_id=user_id)
+    tools = make_user_tools(user_id, email)
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", system_message),
+            ("system", SYSTEM_PROMPT),
             MessagesPlaceholder("chat_history"),
             ("human", "{input}"),
+            MessagesPlaceholder("agent_scratchpad"),
         ]
     )
 
-    chain = prompt | llm | StrOutputParser()
+    agent = create_tool_calling_agent(llm, tools, prompt)
+    executor = AgentExecutor(agent=agent, tools=tools, verbose=False)
 
     return RunnableWithMessageHistory(
-        chain,
+        executor,
         _get_session_history,
         input_messages_key="input",
         history_messages_key="chat_history",
