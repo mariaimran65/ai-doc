@@ -4,9 +4,11 @@ import json
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
+from langchain_community.chat_message_histories import RedisChatMessageHistory
 
 from app.auth_utils import get_current_user
 from app.chat.chain import build_chain
+from app.config import settings
 
 router = APIRouter()
 
@@ -64,3 +66,12 @@ async def chat(
         yield {"data": "[DONE]"}
 
     return EventSourceResponse(event_generator())
+
+
+@router.delete("/history")
+async def clear_history(current_user: dict = Depends(get_current_user)):
+    """Delete the current user's Redis chat history."""
+    user_id = current_user["sub"]
+    history = RedisChatMessageHistory(user_id, url=settings.redis_url)
+    history.clear()
+    return {"cleared": True}

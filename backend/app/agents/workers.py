@@ -10,7 +10,7 @@ def _llm() -> ChatGoogleGenerativeAI:
         model="gemini-3.6-flash",
         temperature=0.3,
         google_api_key=settings.google_api_key,
-        thinking_budget=0,
+        model_kwargs={"thinking_config": {"thinking_budget": 0}},
     )
 
 

@@ -70,7 +70,7 @@ async def answer_question(
         model="gemini-3.6-flash",
         temperature=0.1,
         google_api_key=settings.google_api_key,
-        thinking_budget=0,
+        model_kwargs={"thinking_config": {"thinking_budget": 0}},
     )
 
     # LCEL retrieval chain: retrieve → format → prompt → llm → parse
