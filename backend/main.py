@@ -21,6 +21,7 @@ app = FastAPI(title="AI-Doc API", version="0.1.0")
 async def check_db() -> None:
     import socket
     from app.database import _db_host, _db_port
+
     host = _db_host
     port = int(_db_port)
     try:
@@ -33,7 +34,9 @@ async def check_db() -> None:
         if result == 0:
             logger.info("DB raw TCP connect to %s:%s — OK", ip, port)
         else:
-            logger.error("DB raw TCP connect to %s:%s — FAILED (errno %s)", ip, port, result)
+            logger.error(
+                "DB raw TCP connect to %s:%s — FAILED (errno %s)", ip, port, result
+            )
     except Exception as exc:
         logger.error("DB hostname '%s' resolution failed: %s", host, exc)
     try:
@@ -42,6 +45,7 @@ async def check_db() -> None:
         logger.info("DB connectivity check: OK")
     except Exception as exc:
         logger.error("DB connectivity check: FAILED — %s", exc)
+
 
 app.add_middleware(
     CORSMiddleware,
