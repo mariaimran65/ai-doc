@@ -8,6 +8,7 @@
 
 .messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 28px 0;
   display: flex;
@@ -62,6 +63,9 @@
 /* Message rows */
 .row {
   display: flex;
+  width: 100%;
+  max-width: 860px;
+  margin-inline: auto;
   padding: 11px 28px;
   gap: 14px;
   align-items: flex-start;
@@ -177,7 +181,7 @@
   color: var(--text-1);
   resize: none;
   line-height: 1.5;
-  max-height: 180px;
+  max-height: 160px;
   overflow-y: auto;
   font-family: inherit;
   transition: border-color 0.12s;
@@ -212,4 +216,9 @@
 .sendBtn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .row { padding: 10px 14px; }
+  .bubble { max-width: 85%; }
 }

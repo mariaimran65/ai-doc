@@ -1,6 +1,8 @@
 .shell {
   padding: 32px 36px;
+  width: 100%;
   max-width: 1200px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -52,7 +54,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .table {

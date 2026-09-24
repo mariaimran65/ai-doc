@@ -27,7 +27,7 @@ export default function Knowledge() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { loadDocs() }, [])
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+  useEffect(() => { if (messages.length) bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) }, [messages])
 
   async function loadDocs() {
     try {

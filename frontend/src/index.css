@@ -65,6 +65,7 @@ body {
 
 a { text-decoration: none; color: inherit; }
 button { font-family: inherit; cursor: pointer; }
+button, input, textarea { font: inherit; color: inherit; }
 
 /* Scrollbar polish */
 ::-webkit-scrollbar { width: 5px; height: 5px; }

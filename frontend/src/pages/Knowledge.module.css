@@ -4,7 +4,11 @@
   flex: 1;
   padding: 32px 36px;
   gap: 22px;
+  width: 100%;
   max-width: 1200px;
+  margin-inline: auto;
+  height: 100%;
+  min-height: 0;
 }
 
 .cols {
@@ -229,3 +233,12 @@
 
 .askBtn:hover:not(:disabled) { background: rgba(99, 102, 241, 0.22); }
 .askBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Keep panels inside the viewport so inner lists scroll */
+.sidebar, .qaPanel, .docList { min-height: 0; }
+
+@media (max-width: 900px) {
+  .shell { padding: 20px 16px; height: auto; }
+  .cols { grid-template-columns: 1fr; }
+  .qaPanel { min-height: 480px; }
+}

@@ -43,7 +43,7 @@ def supervisor_node(state: AgentState) -> dict:
             api_key=settings.llm_api_key,
             base_url=settings.llm_base_url,
             temperature=0,
-        ).with_structured_output(SupervisorDecision)
+        ).with_structured_output(SupervisorDecision, method="function_calling")
 
         prompt = ChatPromptTemplate.from_messages(
             [

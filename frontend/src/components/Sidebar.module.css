@@ -5,9 +5,7 @@
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  position: sticky;
-  top: 0;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -215,4 +213,11 @@
 .signOutBtn:hover {
   background: var(--surface-3);
   color: var(--text-1);
+}
+
+@media (max-width: 860px) {
+  .sidebar { width: 64px; min-width: 64px; }
+  .brandName, .navLabel, .linkText, .phaseBadge, .userInfo, .chevron { display: none; }
+  .link, .userBtn { justify-content: center; padding: 10px; }
+  .userMenu { left: 8px; right: auto; min-width: 160px; }
 }
