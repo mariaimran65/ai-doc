@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { IconSend, IconMessageChatbot } from '@tabler/icons-react'
 import { useAuth } from '../context/AuthContext'
 import styles from './Chat.module.css'
+import Markdown from '../components/Markdown'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -157,7 +158,7 @@ export default function Chat() {
                   {isUser ? userInitials : 'AI'}
                 </div>
                 <div className={`${styles.bubble} ${isUser ? styles.bubbleUser : styles.bubbleAssistant}`}>
-                  {m.content}
+                  {isUser ? m.content : <Markdown>{m.content}</Markdown>}
                   {isLastAssistant && <span className={styles.cursor} />}
                 </div>
               </div>

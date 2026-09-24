@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { IconRobot, IconPlayerPlay } from '@tabler/icons-react'
 import styles from './Agents.module.css'
+import Markdown from '../components/Markdown'
+import { stripMarkdown } from '../components/stripMarkdown'
 
 interface Step {
   node: string
@@ -140,7 +142,7 @@ export default function Agents() {
                     <span className={`${styles.dot} ${NODE_DOT[s.node] ?? ''}`} />
                     <span className={styles.nodeName}>{s.node}</span>
                   </div>
-                  <p className={styles.stepOutput}>{s.output}</p>
+                  <p className={styles.stepOutput}>{stripMarkdown(s.output)}</p>
                 </div>
               ))
             )}
@@ -153,9 +155,9 @@ export default function Agents() {
           <div className={styles.panelHeader}>Final output</div>
           <div className={styles.outputBody}>
             {error ? (
-              <p className={styles.outputText} style={{ color: '#e05a5a' }}>Error: {error}</p>
+              <p className={styles.outputText} style={{ color: '#f87171' }}>Error: {error}</p>
             ) : output ? (
-              <p className={styles.outputText}>{output}</p>
+              <div className={styles.outputText}><Markdown>{output}</Markdown></div>
             ) : (
               <div className={styles.outputEmpty}>
                 <IconRobot size={32} className={styles.outputEmptyIcon} />
