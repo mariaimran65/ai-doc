@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { IconDatabase, IconUpload } from '@tabler/icons-react'
 import styles from './Knowledge.module.css'
+import Markdown from '../components/Markdown'
 
 interface Doc {
   id: string
@@ -197,7 +198,7 @@ export default function Knowledge() {
                   key={i}
                   className={`${styles.qaBubble} ${m.role === 'user' ? styles.qaBubbleUser : styles.qaBubbleAssistant}`}
                 >
-                  {m.content}
+                  {m.role === 'user' ? m.content : <Markdown>{m.content}</Markdown>}
                 </div>
               ))
             )}

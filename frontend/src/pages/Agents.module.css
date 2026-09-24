@@ -189,7 +189,6 @@
   font-size: 15px;
   color: var(--text-2);
   line-height: 1.75;
-  white-space: pre-wrap;
 }
 
 .outputText code {
