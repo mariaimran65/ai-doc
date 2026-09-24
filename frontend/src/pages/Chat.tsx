@@ -46,6 +46,7 @@ export default function Chat() {
     const nextMessages = [...messages, userMsg]
     setMessages(nextMessages)
     setInput('')
+    if (textareaRef.current) textareaRef.current.style.height = 'auto'
     setStreaming(true)
 
     // Placeholder assistant message that we'll fill as tokens arrive
@@ -157,8 +158,7 @@ export default function Chat() {
                 </div>
                 <div className={`${styles.bubble} ${isUser ? styles.bubbleUser : styles.bubbleAssistant}`}>
                   {m.content}
-                  {isLastAssistant && m.content === '' && <span className={styles.cursor} />}
-                  {isLastAssistant && m.content !== '' && <span className={styles.cursor} />}
+                  {isLastAssistant && <span className={styles.cursor} />}
                 </div>
               </div>
             )

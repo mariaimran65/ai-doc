@@ -29,7 +29,7 @@ export default function Agents() {
   const stepsEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    stepsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (steps.length) stepsEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [steps])
 
   const run = async (taskText?: string) => {

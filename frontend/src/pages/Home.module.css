@@ -2,6 +2,7 @@
   padding: 44px 44px 64px;
   max-width: 1060px;
   width: 100%;
+  margin-inline: auto;
 }
 
 /* Hero */
@@ -62,14 +63,8 @@
 /* Phase cards */
 .phases {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
-}
-
-@media (max-width: 960px) {
-  .phases {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
 }
 
 .phase {
